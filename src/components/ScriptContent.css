@@ -1,0 +1,12 @@
+.furigana {
+    position: absolute;
+    right: 0;
+    top: 10px;
+  }
+  
+  @media (max-width: 767px) {
+    .furigana {
+      width: 40%;
+    }
+  }
+  
