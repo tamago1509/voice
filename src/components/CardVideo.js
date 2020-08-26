@@ -1,20 +1,41 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import { Button, Divider } from "antd";
 import "antd/dist/antd.css";
 import "./CardVideo.css";
 import ScriptContext from "./context/ScriptContext";
 import Speaking from "./Speaking";
 
+// var player;
+// function onYouTubeIframeAPIReady() {
+//   player = new YT.Player('player', {
+//     events: {
+//       'onStateChange': onPlayerStateChange
+//     }
+//   });
+// }
+// var done = false;
+//     function onPlayerStateChange(event) {
+//       if (event.data == YT.PlayerState.PLAYING && !done) {
+//         setTimeout(stopVideo, 6000);
+//         done = true;
+//       }
+//     }
+//     function stopVideo() {
+//       player.stopVideo();
+//     }
 
-class CardVideo extends Component {
-  render() {
+function CardVideo (){
+
+  
+  
+
     return (
       <div className="card-video" id="player">
         <iframe
           src="https://www.youtube.com/embed/zzQVS7RSliU"
           frameborder="0"
           allow="accelerometer; autoplay; 
-    encrypted-media; gyroscope; picture-in-picture"
+            encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
         ></iframe>
         <div className="card-btn">
@@ -40,7 +61,7 @@ class CardVideo extends Component {
         </div>
       </div>
     );
-  }
+  
 }
 CardVideo.contextType = ScriptContext;
 export default CardVideo;
