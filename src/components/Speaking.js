@@ -1,7 +1,7 @@
 import React, { Component,useEffect,useState } from "react";
 
 
-function Speaking() {
+function Speaking(props) {
 
   const [transcript, setTran] = useState('');
   const [time,setTime] = useState('1:23')
@@ -62,7 +62,7 @@ function Speaking() {
   return (
     <div>
       <div className="timeline">
-        <button>{time}</button>
+        <button onClick={() => props.play()}>{time}</button>
         <span className="speak-content">
           {script}
         </span>
