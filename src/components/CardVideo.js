@@ -1,13 +1,57 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import { Button, Divider } from "antd";
 import "antd/dist/antd.css";
 import "./CardVideo.css";
 import ScriptContext from "./context/ScriptContext";
 import Speaking from "./Speaking";
+import ScriptContent from "./ScriptContent";
 
+const initialController = {
+  showScript : true,
+  showTrans : false,
+  showSpeak : false
+}
+
+function reducer(state, action){
+  switch (action.type) {
+    
+    case 'showScript':
+      return {
+        showScript : true,
+        showTrans : false,
+        showSpeak : false
+      }
+    
+    case 'showTrans':
+      return {
+        showScript : false,
+        showTrans : true,
+        showSpeak : false
+      }
+    
+    case 'showSpeak':
+      return {
+        showScript : false,
+        showTrans : false,
+        showSpeak : true
+      }
+
+    default:
+      return state
+  }
+}
 
 function CardVideo (){
 
+
+  //controller
+  const [controller, dispatch] = useReducer(reducer, initialController);
+
+  // const [showScript, setShowScript] = useState(true)
+  // const [showTran, setShowTran] = useState(false)
+  // const [showSpeak, setShowSpeak] = useState(false)
+
+  //player
   const [player, setPlayer] = useState(null)
   
   
@@ -70,29 +114,49 @@ function CardVideo (){
         ></iframe>
         <div className="card-btn">
           <Button
-            onClick={() => {
-              this.context.setShow(!this.context.isShow);
-            }}
+            onClick={() => dispatch( { type : 'showScript' } )}
             className="btn"
             type="primary"
           >
             PHỤ ĐỀ
           </Button>
           <Divider className="divide" type="vertical" />
-          <Button className="btn">DỊCH</Button>
+          <Button className="btn"  onClick={() => dispatch( { type : 'showTrans' } )}>
+            DỊCH
+          </Button>
           <Divider className="divide" type="vertical" />
-          <Button className="btn" type="dashed">
+          <Button 
+            onClick={() => dispatch( { type : 'showSpeak' } )}
+            className="btn" 
+            type="dashed"
+          >
             LUYỆN NÓI
           </Button>
           <br />
         </div>
         <div className="card-content">
-          <Speaking play={() => {
+          {/* <Speaking play={() => {
             player.seekTo(0)
             setTimeout(()=>{
               player.stopVideo()
             },5000)
-          }}/>
+          }}/> */}
+          {/* <ScriptContent /> */}
+          {
+            controller.showScript && <ScriptContent />
+          }
+          {
+            controller.showTrans && `Translate section`
+          }
+          {
+            controller.showSpeak &&
+            <Speaking play={() => {
+              player.seekTo(0)
+              setTimeout(()=>{
+                player.stopVideo()
+              },5000)
+            }}/>
+          }
         </div>
       </div>
     );
