@@ -1,0 +1,11 @@
+.each-script{
+    display: flex;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #dcdcdc75;
+    margin: 5px 0;
+}
+.each-script > p{
+    margin-bottom: 0;
+}

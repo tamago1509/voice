@@ -7,6 +7,7 @@ import { isKanji,toHiragana } from 'wanakana';
 import Kuroshiro from "kuroshiro";
 import KuromojiAnalyzer from "kuroshiro-analyzer-kuromoji";
 import axios from 'axios'
+import Script from "./Script/Script";
 
 
 
@@ -22,11 +23,16 @@ import axios from 'axios'
 // }
 
 
-function ScriptContent () {
-
-  
-  const kana = "来週の参観日の授業で皆さんの作文を読みたいと思います<br>今日は私の生まれた本当彼氏がいる"
-  const [script, setScript] = useState(kana)
+function ScriptContent (props) {
+  let { jaSub } = props
+  const fullContent = jaSub.reduce((content, item) => (content + item.content), '')
+ 
+  // const kana = "来週の参観日の授業で皆さんの作文を読みたいと思います<br>今日は私の生まれた本当彼氏がいる"
+ 
+  const kana = fullContent.split('<br>')
+  kana.pop()
+  console.log(kana)
+  const [script, setScript] = useState(fullContent)
   const [furi, setFuri] = useState(false)
   const [isLoading, setLoading] = useState(false)
   
@@ -44,9 +50,10 @@ function ScriptContent () {
         }
       })
       .then(function (res) {
-        console.log(res.data.result)
+        
         setLoading(false)
-        setScript(res.data.result.replace(/&lt;br&gt;/g, `<br>`) )
+        setScript(res.data.result.replace(/&lt;br&gt;/g, `<br>`))
+        
         setFuri(true)
       })
       .catch(function (error) {
@@ -62,7 +69,7 @@ function ScriptContent () {
   // useEffect(()=>{
     
   // })
-
+ 
     return (
       
 
@@ -89,7 +96,26 @@ function ScriptContent () {
           <div className="script-content">
           {
             !furi ? 
-            <div>{ isLoading ? <Spin size='small'/> : <p dangerouslySetInnerHTML={{__html : kana}}></p> }</div> :
+            <div>
+              { 
+                isLoading ? <Spin size='small'/> : /*<p dangerouslySetInnerHTML={{__html : kana}}></p>*/ 
+                <div style={{
+                    padding: "0 10px",
+                    maxHeight: "300px",
+                    overflowY : 'scroll'
+                }}>
+                  {
+                    kana.map((item, index) => 
+                      <Script 
+                        key={index} 
+                        content={item} 
+                        time={jaSub[index].minute} 
+                      />
+                    )
+                  }
+                </div>
+              }
+            </div> :
             <p dangerouslySetInnerHTML={{__html : script}} ></p>
           }
           </div>
