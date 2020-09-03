@@ -2,10 +2,13 @@ import React, { Component,useEffect,useState } from "react";
 
 
 function Speaking(props) {
+  let { jaSub } = props
+  
+  console.log(jaSub);
 
   const [transcript, setTran] = useState('');
-  const [time,setTime] = useState('1:23')
-  const [script,setScript] = useState('来週の参観日の授業で皆さんの作文を読みたいと思います');
+  const [time,setTime] = useState(jaSub[0].minute)
+  const [script,setScript] = useState(jaSub[0].content.replace(/<br>/g, ""));
 
   const [resultCheck, setResultCheck] = useState([])
 
@@ -54,7 +57,7 @@ function Speaking(props) {
         }
         setResultCheck(res)
         setTran(transcript) 
-        console.log(resultCheck)   
+          
       }
   });
   
@@ -62,7 +65,10 @@ function Speaking(props) {
   return (
     <div>
       <div className="timeline">
-        <button onClick={() => props.play()}>{time}</button>
+        <button onClick={() => {
+            props.play(0)
+            // console.log(jaSub[0])
+          }}>{time}</button>
         <span className="speak-content">
           {script}
         </span>

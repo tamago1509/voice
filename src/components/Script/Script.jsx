@@ -6,9 +6,9 @@ function Script(props) {
     return (
         <div className = "each-script">
             <Tag color="#f50">{props.time}</Tag>
-            <p>
-                {props.content}
-            </p>
+            {
+                props.content
+            }
         </div>
     )
 }

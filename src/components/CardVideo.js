@@ -6,6 +6,8 @@ import ScriptContext from "./context/ScriptContext";
 import Speaking from "./Speaking";
 import ScriptContent from "./ScriptContent";
 
+
+let timer
 const initialController = {
   showScript : true,
   showTrans : false,
@@ -49,7 +51,7 @@ function CardVideo (){
   const data = [{
     "videoURL":"https://www.youtube.com/embed/zzQVS7RSliU?enablejsapi=1",
     "jaSub":[
-            {"start": 482,"minute":"8:02","times": 2000, "content": "ただいま～<br>"},
+            {"start": 483,"minute":"8:03","times": 2000, "content": "ただいま～<br>"},
             {"start": 487, "minute":"8:07","times": 2000, "content":"お父さんのバッカ～<br>"},
             {"start": 489, "minute":"8:09","times": 3000, "content":"なんだ、なんだい<br>"},
             {"start": 491, "minute":"8:11","times": 4000, "content":"どうして私のことなんてどうでも良かったんでしょう<br>"},
@@ -73,7 +75,7 @@ function CardVideo (){
             {"start": 547, "minute":"9:07","times": 2000, "content":"行かなかったって言いなよ<br>"},
             {"start": 552, "minute":"9:12","times": 5000, "content":"お姉ちゃんの時ばかり毎日病院に行ったんだって<br>"},
             {"start": 557, "minute":"9:17","times": 3000, "content":"初めての子供の時はみんなそうだ<br>"},
-            {"start": 563, "minute":"9:23","times": 6000, "content":"二人目で悪かったね、また女で悪かったね　わ～は～<br>`"}
+            {"start": 563, "minute":"9:23","times": 6000, "content":"二人目で悪かったね、また女で悪かったね　わ～は～<br>"}
         ],
     "vietSub":
             [{"start": 482, "minute":"8:02","times": 2000, "content": "Bố về rồi đây<br>"},
@@ -109,27 +111,52 @@ function CardVideo (){
   // const [showSpeak, setShowSpeak] = useState(false)
 
   //player
-  const [player, setPlayer] = useState(null)
-  
-  
+  const [player, setPlayer] = useState(null) //YT -> null
+  // const [isSeek, setIsSeek] = useState(false) //true -> false
+  // const [dataIndex, setDataIndex] = useState(0) //0 -> 1
+  const [seek, setSeek] = useState({
+    status : false,
+    dataIndex : 0
+  })
+
+  console.log('abc'+seek.status)
+ 
+
+
   useEffect(()=>{
-    if(window.YT == undefined){
-      function onPlayerStateChange(){}
-   
-      window.onYouTubeIframeAPIReady = function() {
-        let tempPlayer = new window.YT.Player('player', {
-          events: {
-            'onStateChange': onPlayerStateChange
-            
-          }
-        });
-        console.log(tempPlayer)
-        setPlayer(pre => {
-          return tempPlayer
-        })
-        
+
+    function onPlayerStateChange(e){
+      // clickSeek()
+      console.log(seek.status, e.target.getPlayerState())
+      if( seek.status && e.target.getPlayerState() === 1){
+        clearTimeout(timer)
+        timer = setTimeout(()=>{
+          e.target.pauseVideo()
+          
+          setSeek({...seek, status : false})
+        }, data[0]['jaSub'][seek.dataIndex].times)
+  
       }
+    }
+   
+    console.log('useeffect' +seek.status)
+    if(window.YT == undefined){
+      // console.log(window.YT)
       //add event to window
+      window.onYouTubeIframeAPIReady = function() {
+        console.log(window.YT)
+          let tempPlayer = new window.YT.Player('player', {
+            events: {
+              'onStateChange': onPlayerStateChange
+              
+            }
+          });
+          console.log(tempPlayer)
+          setPlayer(pre => {
+            return tempPlayer
+          })
+          
+        }
       // window.addEventListener('onYouTubeIframeAPIReady', onYouTubeIframeAPIReady)
       const tag = document.createElement('script');
       tag.src = "https://www.youtube.com/iframe_api";
@@ -149,6 +176,8 @@ function CardVideo (){
     // }
     } else {
       console.log(player)
+      console.log('sau')
+      player.seekTo(data[0]['jaSub'][seek.dataIndex].start)
 
       
       
@@ -156,8 +185,21 @@ function CardVideo (){
 
 
 
-  }, [player])
+  }, [seek.status, seek.dataIndex])
   
+
+  // function clickSeek(){
+  //   console.log(isSeek)
+  //   if(isSeek && player.getPlayerState() === 1){
+  //     clearTimeout(timer)
+  //     timer = setTimeout(()=>{
+  //       player.pauseVideo()
+  //       console.log(timer)
+  //       setIsSeek(false)
+  //     }, data[0]['jaSub'][dataIndex].times)
+
+  //   }
+  // }
 
     return (
       <div className="card-video">
@@ -204,14 +246,21 @@ function CardVideo (){
           }
           {
             controller.showTrans && `Translate section`
+            
           }
           {
             controller.showSpeak &&
-            <Speaking play={() => {
-              player.seekTo(0)
-              setTimeout(()=>{
-                player.stopVideo()
-              },5000)
+            <Speaking jaSub = {data[0]['jaSub']}
+             play={index => {
+              
+              setSeek(pre => {
+                console.log('trc')
+                return {status : true, dataIndex : index}
+              })
+              // console.log('sau')
+              // player.seekTo(data[0]['jaSub'][seek.dataIndex].start)
+             
+
             }}/>
           }
         </div>

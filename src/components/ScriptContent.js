@@ -52,7 +52,12 @@ function ScriptContent (props) {
       .then(function (res) {
         
         setLoading(false)
-        setScript(res.data.result.replace(/&lt;br&gt;/g, `<br>`))
+        console.log(res.data.result)
+        setScript(pre => {
+          let temp = res.data.result.replace(/&lt;br&gt;/g, `<br>`)
+          return temp
+        })
+        // console.log(script)
         
         setFuri(true)
       })
@@ -66,9 +71,14 @@ function ScriptContent (props) {
     }
   }
   
-  // useEffect(()=>{
-    
-  // })
+  // const splitScript = (script, cb) =>  {
+  //   const result = cb(script);
+  //   const script = result.split("<br>");
+  //   script.pop();
+  //   setScript(script);
+
+
+  // }
  
     return (
       
@@ -78,7 +88,7 @@ function ScriptContent (props) {
           {
             !furi ? 
             (<Button 
-              onClick={()=>{translate(script)}}
+              onClick={() => translate(script)}
               className="btn furigana" 
               type="primary"
               disabled={isLoading}
@@ -101,14 +111,14 @@ function ScriptContent (props) {
                 isLoading ? <Spin size='small'/> : /*<p dangerouslySetInnerHTML={{__html : kana}}></p>*/ 
                 <div style={{
                     padding: "0 10px",
-                    maxHeight: "300px",
+                    maxHeight: "200px",
                     overflowY : 'scroll'
                 }}>
                   {
                     kana.map((item, index) => 
                       <Script 
                         key={index} 
-                        content={item} 
+                        content={( <p>{item}</p> )} 
                         time={jaSub[index].minute} 
                       />
                     )
@@ -116,7 +126,22 @@ function ScriptContent (props) {
                 </div>
               }
             </div> :
-            <p dangerouslySetInnerHTML={{__html : script}} ></p>
+            <div style={{
+                padding: "0 10px",
+                maxHeight: "200px",
+                overflowY : 'scroll'
+              }}
+            >
+              {
+                script.split('<br>').slice(0, -1).map((item, index) => 
+                  <Script 
+                    key={index} 
+                    content={( <p dangerouslySetInnerHTML={{__html : item}}></p> )} 
+                    time={jaSub[index].minute} 
+                  />
+                )
+              }
+            </div>
           }
           </div>
         </div>
