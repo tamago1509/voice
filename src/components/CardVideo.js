@@ -109,7 +109,7 @@ function CardVideo (){
   // const [showScript, setShowScript] = useState(true)
   // const [showTran, setShowTran] = useState(false)
   // const [showSpeak, setShowSpeak] = useState(false)
-
+  
   //player
   const [player, setPlayer] = useState(null) //YT -> null
   // const [isSeek, setIsSeek] = useState(false) //true -> false
@@ -120,34 +120,25 @@ function CardVideo (){
   })
 
   console.log('abc'+seek.status)
- 
-
+  
+  
 
   useEffect(()=>{
 
-    function onPlayerStateChange(e){
-      // clickSeek()
-      console.log(seek.status, e.target.getPlayerState())
-      if( seek.status && e.target.getPlayerState() === 1){
-        clearTimeout(timer)
-        timer = setTimeout(()=>{
-          e.target.pauseVideo()
-          
-          setSeek({...seek, status : false})
-        }, data[0]['jaSub'][seek.dataIndex].times)
-  
-      }
-    }
-   
+    
+    
     console.log('useeffect' +seek.status)
     if(window.YT == undefined){
       // console.log(window.YT)
       //add event to window
+
+      
+      
       window.onYouTubeIframeAPIReady = function() {
         console.log(window.YT)
           let tempPlayer = new window.YT.Player('player', {
             events: {
-              'onStateChange': onPlayerStateChange
+              
               
             }
           });
@@ -175,9 +166,27 @@ function CardVideo (){
       
     // }
     } else {
+       
       console.log(player)
-      console.log('sau')
-      player.seekTo(data[0]['jaSub'][seek.dataIndex].start)
+      function onPlayerStateChange(e){
+        // clickSeek()
+        console.log(seek.status, e.target.getPlayerState(), data[0]['jaSub'][seek.dataIndex].times)
+        if( seek.status && e.target.getPlayerState() === 1){
+          clearTimeout(timer)
+          timer = setTimeout(()=>{
+            e.target.pauseVideo()
+            player.removeEventListener("onStateChange", onPlayerStateChange)
+            setSeek({...seek, status : false})
+          }, data[0]['jaSub'][seek.dataIndex].times)
+    
+        }
+      }
+      if(seek.status){
+        player.addEventListener("onStateChange", onPlayerStateChange);
+        console.log('sau ' + seek.status)
+        player.seekTo(data[0]['jaSub'][seek.dataIndex].start)
+        console.log('sau2 ' + seek.status)
+      }
 
       
       
@@ -185,7 +194,7 @@ function CardVideo (){
 
 
 
-  }, [seek.status, seek.dataIndex])
+  }, [seek.status])
   
 
   // function clickSeek(){
@@ -254,7 +263,7 @@ function CardVideo (){
              play={index => {
               
               setSeek(pre => {
-                console.log('trc')
+                console.log('trc ' + pre.status)
                 return {status : true, dataIndex : index}
               })
               // console.log('sau')
