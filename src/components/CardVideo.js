@@ -43,6 +43,8 @@ function reducer(state, action){
   }
 }
 
+
+
 function CardVideo (){
 
 
@@ -170,22 +172,35 @@ function CardVideo (){
       console.log(player)
       function onPlayerStateChange(e){
         // clickSeek()
+        // console.log(e.type)
         console.log(seek.status, e.target.getPlayerState(), data[0]['jaSub'][seek.dataIndex].times)
         if( seek.status && e.target.getPlayerState() === 1){
           clearTimeout(timer)
           timer = setTimeout(()=>{
             e.target.pauseVideo()
             player.removeEventListener("onStateChange", onPlayerStateChange)
-            setSeek({...seek, status : false})
+            // setSeek({...seek, status : false})
+           
           }, data[0]['jaSub'][seek.dataIndex].times)
     
+        } else if(seek.status && e.target.getPlayerState() === 2) {
+            e.target.removeEventListener("onStateChange", onPlayerStateChange)
+            player.removeEventListener("onStateChange", onPlayerStateChange)
+            
+            setSeek({...seek, status : false})
         }
       }
       if(seek.status){
-        player.addEventListener("onStateChange", onPlayerStateChange);
+        player.removeEventListener("onStateChange", onPlayerStateChange)
+        player.addEventListener("onStateChange", onPlayerStateChange)
+        console.log(player)
         console.log('sau ' + seek.status)
         player.seekTo(data[0]['jaSub'][seek.dataIndex].start)
-        console.log('sau2 ' + seek.status)
+        // player.removeEventListener("onStateChange", onPlayerStateChange)
+        if(player.getPlayerState() === 2){
+          player.playVideo()
+        }
+        console.log('sau2 ' + data[0]['jaSub'][seek.dataIndex].start)
       }
 
       
